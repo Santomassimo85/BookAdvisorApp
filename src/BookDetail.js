@@ -74,15 +74,16 @@ function BookDetail() {
 
       <div className="book-detail-flex" style={{ display: 'flex', gap: '40px' }}>
         <div style={{ flexShrink: 0 }}>
-          {/* CORREZIONE: Optional chaining per l'immagine */}
-          <img 
-            src={book.fullInfo.imageLinks?.thumbnail || 'placeholder.png'} 
-            alt={`Cover of ${book.title}`} 
-            style={{ width: '250px', height: 'auto', border: '3px solid #bba375', boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.2)' }} 
-          />
-          <h3 style={{ marginTop: '20px', color: '#5d4037' }}>Current Rating:</h3>
-          {renderStars(false)}
-        </div>
+  {/* Questo è il punto critico. Se book.fullInfo è undefined, questo fallisce. */}
+  {/* CORREZIONE: Usa il punto interrogativo per l'optional chaining (?) in modo che se fullInfo, imageLinks, o thumbnail non esistono, usa 'placeholder.png'. */}
+  <img 
+    src={book.fullInfo?.imageLinks?.thumbnail || 'placeholder.png'} 
+    alt={`Cover of ${book.title}`} 
+    style={{ width: '250px', height: 'auto', border: '3px solid #bba375', boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.2)' }} 
+  />
+  <h3 style={{ marginTop: '20px', color: '#5d4037' }}>Current Rating:</h3>
+  {renderStars(false)}
+</div>
         
         <div>
           <h1>{book.title}</h1>

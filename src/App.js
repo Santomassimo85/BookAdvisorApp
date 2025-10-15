@@ -6,12 +6,11 @@ import BooksList from './BooksList';
 import Favourites from './Favourites'; 
 import BookDetail from './BookDetail'; 
 import AdminPanel from './AdminPanel'; 
+import ReadingRoom from './ReadingRoom'; // NUOVO COMPONENTE
 import './App.css'; 
 
-// Componente Wrapper per applicare il tema in base all'utente
 function AppContent() {
   const { user } = useAuth();
-  // Applica la classe 'admin-dark' se l'utente è 'admin'
   const appClassName = user === 'admin' ? 'App admin-dark' : 'App';
   
   return (
@@ -24,6 +23,7 @@ function AppContent() {
           <Route path="/favourites" element={<Favourites />} />
           <Route path="/book/:bookId" element={<BookDetail />} />
           <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/reading-room" element={<ReadingRoom />} /> {/* NUOVA ROUTE */}
         </Routes>
       </div>
     </div>
