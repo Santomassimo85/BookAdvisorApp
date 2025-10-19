@@ -17,7 +17,7 @@ function BooksList() {
       if (query.length < 3) return;
 
       setLoading(true);
-      const URL = `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=20`;
+      const URL = `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=30`;
       
       try {
         const response = await fetch(URL);
@@ -28,11 +28,13 @@ function BooksList() {
           title: item.volumeInfo.title || 'Unknown Title',
           authors: item.volumeInfo.authors ? item.volumeInfo.authors.join(', ') : 'Unknown Author',
           publishedDate: item.volumeInfo.publishedDate ? item.volumeInfo.publishedDate.substring(0, 4) : 'N/A',
-          // Optional chaining per prevenire crash se mancano i links
+          // Recupero della tipologia (categoria)
+          type: item.volumeInfo.categories ? item.volumeInfo.categories[0] : 'General Literature', 
+          // Optional chaining per l'immagine
           image: item.volumeInfo.imageLinks?.smallThumbnail || null, 
           infoLink: item.volumeInfo.infoLink,
           description: item.volumeInfo.description || "No description available.",
-          fullInfo: item.volumeInfo 
+          fullInfo: item.volumeInfo // Salviamo il fullInfo per la pagina di dettaglio
         })) : [];
 
         fetchedBooks.sort((a, b) => {
@@ -85,6 +87,8 @@ function BooksList() {
             <h3>{book.title}</h3>
             <p>Author(s): **{book.authors}**</p>
             <p>Year: *{book.publishedDate}*</p>
+            <p>Type: **{book.type}**</p> 
+
             <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
               {[...Array(5)].map((_, i) => (
                 <FaStar key={i} color={i < starCount ? '#ffc107' : '#e4e5e9'} style={{ marginRight: '2px' }} />
@@ -130,32 +134,38 @@ function BooksList() {
           placeholder="Search by title, author, or topic (min. 3 characters)"
           style={{ flexGrow: 1, padding: '10px', border: '1px solid #c9b78e', borderRadius: '3px' }}
         />
-        <button type="submit" style={{ padding: '10px 15px', backgroundColor: '#bba375', color: '#3e321e', border: 'none', cursor: 'pointer', borderRadius: '3px' }}><FaSearch /></button>
+        <button type="submit" style={{ padding: '10px 15px', backgroundColor: '#B89B6A', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '3px', fontFamily: 'Cinzel Decorative, serif' }}>
+          <FaSearch style={{ marginRight: '5px' }}/> Search
+        </button>
       </form>
 
       <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '15px', color: '#5d4037' }}>
         <span>Sort by:</span>
         <button 
           onClick={() => setSortBy('title')} 
-          style={{ backgroundColor: sortBy === 'title' ? '#5d4037' : '#e0e0e0', color: sortBy === 'title' ? 'white' : '#3e321e', border: 'none', padding: '8px 15px', borderRadius: '3px', cursor: 'pointer' }}
+          style={{ backgroundColor: sortBy === 'title' ? '#5D4037' : '#B89B6A', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '3px', cursor: 'pointer', fontFamily: 'Cinzel Decorative, serif' }}
         >
           <FaSortAlphaDown /> Title
         </button>
         <button 
           onClick={() => setSortBy('authors')} 
-          style={{ backgroundColor: sortBy === 'authors' ? '#5d4037' : '#e0e0e0', color: sortBy === 'authors' ? 'white' : '#3e321e', border: 'none', padding: '8px 15px', borderRadius: '3px', cursor: 'pointer' }}
+          style={{ backgroundColor: sortBy === 'authors' ? '#5D4037' : '#B89B6A', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '3px', cursor: 'pointer', fontFamily: 'Cinzel Decorative, serif' }}
         >
           <FaSortAlphaDown /> Author
         </button>
         <button 
           onClick={() => setSortBy('publishedDate')} 
-          style={{ backgroundColor: sortBy === 'publishedDate' ? '#5d4037' : '#e0e0e0', color: sortBy === 'publishedDate' ? 'white' : '#3e321e', border: 'none', padding: '8px 15px', borderRadius: '3px', cursor: 'pointer' }}
+          style={{ backgroundColor: sortBy === 'publishedDate' ? '#5D4037' : '#B89B6A', color: 'white', border: 'none', padding: '8px 15px', borderRadius: '3px', cursor: 'pointer', fontFamily: 'Cinzel Decorative, serif' }}
         >
           <FaSortNumericDown /> Year (Recent)
         </button>
       </div>
 
-      {loading && <p style={{ textAlign: 'center' }}>Loading manuscripts... 📜</p>}
+      {loading && (
+        <div className="loading-spinner">
+            <div className="book-spinner"></div>
+        </div>
+      )}
       
       {!loading && books.length === 0 && query.length >= 3 && <p style={{ textAlign: 'center' }}>No manuscripts found for "{query}".</p>}
 

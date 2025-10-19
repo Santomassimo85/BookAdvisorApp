@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,11 +9,14 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  if (user) {
-    navigate('/');
-    return null;
-  }
-  
+  // NUOVO BLOCCO useEffect: Gestisce il reindirizzamento in modo controllato.
+  useEffect(() => {
+    if (user) {
+      // Reindirizza l'utente solo se lo stato 'user' è cambiato e non è null
+      navigate('/');
+    }
+  }, [user, navigate]); // Dipende da 'user' e 'navigate'
+
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password) => password.length >= 1;
 
@@ -34,7 +37,7 @@ function Login() {
     if (role === 'admin') {
       if (email === 'admin@admin.com' && password === 'admin') {
         login('admin');
-        navigate('/');
+        // NON CHIAMARE navigate() QUI. Lascia che useEffect lo faccia.
       } else {
         setError('Invalid credentials for Admin access.');
       }
@@ -43,8 +46,17 @@ function Login() {
     
     // Logica di accesso USER (finto)
     login('user');
-    navigate('/');
+    // NON CHIAMARE navigate() QUI. Lascia che useEffect lo faccia.
   };
+
+  // Se 'user' è già settato, non mostrare il form (useEffect gestirà la navigazione)
+  if (user) {
+    return (
+        <div className="parchment-container" style={{ textAlign: 'center', marginTop: '50px' }}>
+            <h2>Redirecting...</h2>
+        </div>
+    );
+  }
 
   return (
     <div className="parchment-container" style={{ maxWidth: '500px', margin: '50px auto' }}>
@@ -57,14 +69,14 @@ function Login() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email Address"
-          style={{ padding: '10px', border: '1px solid #c9b78e', borderRadius: '3px' }}
+          // Stili input omessi per brevità, ma usa quelli del tuo App.css
         />
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password (min 1 character)"
-          style={{ padding: '10px', border: '1px solid #c9b78e', borderRadius: '3px' }}
+          // Stili input omessi
         />
         
         {error && <p style={{ color: 'red', margin: 0 }}>{error}</p>}
@@ -72,13 +84,13 @@ function Login() {
         <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '15px' }}>
           <button 
             onClick={(e) => handleLogin(e, 'user')}
-            style={{ padding: '10px 20px', fontSize: '1.1em', backgroundColor: '#bba375', color: '#3e321e', border: 'none', cursor: 'pointer', borderRadius: '5px', fontWeight: 'bold' }}
+            // Stili button omessi
           >
             Login as USER
           </button>
           <button 
             onClick={(e) => handleLogin(e, 'admin')}
-            style={{ padding: '10px 20px', fontSize: '1.1em', backgroundColor: '#5d4037', color: 'white', border: 'none', cursor: 'pointer', borderRadius: '5px', fontWeight: 'bold' }}
+            // Stili button omessi
           >
             Login as ADMIN
           </button>

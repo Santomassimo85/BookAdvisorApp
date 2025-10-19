@@ -24,31 +24,26 @@ function AdminPanel() {
       return;
     }
 
-    // Qui salveremmo la nuova descrizione nel database reale.
-    // Simuliamo l'operazione salvando un flag nel localStorage per BookID.
-    
-    // In un'app reale, useresti l'API per aggiornare il campo.
     console.log(`Simulating update for Book ID: ${bookId} with new description: ${newDescription.substring(0, 50)}...`);
     
-    // Esempio di come potresti simulare il salvataggio di metadati per questo ID
+    // Simula il salvataggio: in una vera app qui ci sarebbe una chiamata API PUT
     localStorage.setItem(`admin_desc_${bookId}`, newDescription); 
     
     setMessage(`Successfully saved new description for Book ID: ${bookId}! (Simulated)`);
     setBookId('');
     setNewDescription('');
-    setTimeout(() => setMessage(''), 3000); // Pulisce il messaggio
+    setTimeout(() => setMessage(''), 3000);
   };
   
-  // Per mostrare la coerenza del Dark Mode nell'Admin Panel
   const adminPanelStyle = {
-      color: user === 'admin' ? '#88c0d0' : '#5d4037',
+      color: user === 'admin' ? '#FFD700' : '#5d4037',
       textAlign: 'center'
   };
 
   return (
     <div className="parchment-container" style={{ maxWidth: '700px', margin: '50px auto' }}>
       <h1 style={adminPanelStyle}>Admin Panel: Content Management <FaEdit /></h1>
-      <p style={{ textAlign: 'center', color: user === 'admin' ? '#d8dee9' : '#3e321e' }}>
+      <p style={{ textAlign: 'center', color: user === 'admin' ? '#E8E8E8' : '#3e321e' }}>
         Current Theme: **Dark Mode** is active for Admin.
       </p>
       <p>Simulate content editing, such as updating a book's description. Note: This change is local only.</p>
@@ -61,7 +56,7 @@ function AdminPanel() {
           value={bookId}
           onChange={(e) => setBookId(e.target.value)}
           placeholder="Enter the ID of the book to modify"
-          style={{ padding: '10px', border: '1px solid #4c566a', borderRadius: '3px', color: user === 'admin' ? '#d8dee9' : '#3e321e', backgroundColor: user === 'admin' ? '#3b4252' : 'white' }}
+          style={{ padding: '10px', border: '1px solid #4C566A', borderRadius: '3px' }}
         />
         
         <label style={{ fontWeight: 'bold' }}>New Description:</label>
@@ -70,18 +65,18 @@ function AdminPanel() {
           onChange={(e) => setNewDescription(e.target.value)}
           placeholder="Enter the new, improved description for the book..."
           rows="6"
-          style={{ padding: '10px', border: '1px solid #4c566a', borderRadius: '3px', color: user === 'admin' ? '#d8dee9' : '#3e321e', backgroundColor: user === 'admin' ? '#3b4252' : 'white' }}
+          style={{ padding: '10px', border: '1px solid #4C566A', borderRadius: '3px' }}
         />
         
         <button 
           type="submit" 
-          style={{ padding: '10px 20px', backgroundColor: '#88c0d0', color: '#1a1e24', border: 'none', cursor: 'pointer', borderRadius: '5px', fontWeight: 'bold', marginTop: '10px' }}
+          style={{ padding: '10px 20px', backgroundColor: '#00BFFF', color: '#1C1C1C', border: 'none', cursor: 'pointer', borderRadius: '5px', fontWeight: 'bold', marginTop: '10px' }}
         >
           <FaCheckCircle /> Simulate Save Changes
         </button>
       </form>
       
-      {message && <p style={{ marginTop: '20px', color: message.includes('Successfully') ? '#a3be8c' : '#bf616a', fontWeight: 'bold' }}>{message}</p>}
+      {message && <p style={{ marginTop: '20px', color: message.includes('Successfully') ? '#A3BE8C' : '#BF616A', fontWeight: 'bold' }}>{message}</p>}
     </div>
   );
 }

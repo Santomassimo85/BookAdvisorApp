@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { FaBars, FaTimes } from 'react-icons/fa'; 
@@ -7,6 +7,13 @@ function NavMenu() {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false); 
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    // Attiva l'animazione di ingresso dopo 300ms dal caricamento
+    const timer = setTimeout(() => setLoaded(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   const getLinkClass = (path) => {
     let className = 'nav-link';
@@ -16,52 +23,93 @@ function NavMenu() {
     return className;
   };
 
-  const handleLinkClick = () => {
-    setIsOpen(false); 
-  };
-  
+  const handleLinkClick = () => setIsOpen(false);
   const handleLogoutClick = () => {
-      logout();
-      setIsOpen(false);
+    logout();
+    setIsOpen(false);
   };
-  
-  // Rimosso lo stile inline che forzava la colonna
+
+  // Effetto flip 3D per ogni lettera, con animazione di entrata
+  const FlipLink = ({ to, children, className, onClick }) => {
+    const text = children.toString().split('');
+    return (
+      <Link to={to} className={className} onClick={onClick}>
+        <div className={`nav-link-flip-effect ${loaded ? 'loaded' : ''}`}>
+          {text.map((letter, index) => (
+            <span key={index} style={{ '--i': index }}>
+              {letter}
+            </span>
+          ))}
+        </div>
+      </Link>
+    );
+  };
 
   return (
     <nav className="nav-menu">
+      <div className="logo-text">Whispering Pages</div>
+
       <ul className="nav-list" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        {/* Logo finto o titolo, fisso a sinistra */}
-        <p>Welcome to <span style={{ fontWeight: '900', color: '#D4AF37', fontSize: '1.4em' }}>Whispering Pages</span>
-        </p>
-        {/* Icona Burger/Close per mobile */}
+        {/* <FlipLink to="/" className={getLinkClass('/')} onClick={handleLinkClick}>
+          Whispering Pages
+        </FlipLink> */}
+
         <div className="burger-menu-icon" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <FaTimes /> : <FaBars />}
         </div>
-        
-        {/* Contenitore dei Link */}
+
         <div className={`nav-links-container ${isOpen ? 'open' : ''}`}>
-          
-          <div className="nav-group-links"> {/* Gruppo 1: I Link */}
-             <li><Link to="/reading-room" className={getLinkClass('/reading-room')} onClick={handleLinkClick}>Reading Room</Link></li>
-             
-             <li><Link to="/" className={getLinkClass('/')} onClick={handleLinkClick}>Catalogue</Link></li>
-             
-             {user && <li><Link to="/favourites" className={getLinkClass('/favourites')} onClick={handleLinkClick}>My Favourites</Link></li>}
-             
-             {user === 'admin' && <li><Link to="/admin" className={getLinkClass('/admin')} onClick={handleLinkClick}>Admin Panel</Link></li>}
+          <div className="nav-group-links">
+            <li>
+              <FlipLink to="/reading-room" className={getLinkClass('/reading-room')} onClick={handleLinkClick}>
+                Reading Room
+              </FlipLink>
+            </li>
+            <li>
+              <FlipLink to="/" className={getLinkClass('/')} onClick={handleLinkClick}>
+                Catalogue
+              </FlipLink>
+            </li>
+            {user && (
+              <li>
+                <FlipLink to="/favourites" className={getLinkClass('/favourites')} onClick={handleLinkClick}>
+                  My Favourites
+                </FlipLink>
+              </li>
+            )}
+            {user === 'admin' && (
+              <li>
+                <FlipLink to="/admin" className={getLinkClass('/admin')} onClick={handleLinkClick}>
+                  Admin Panel
+                </FlipLink>
+              </li>
+            )}
           </div>
-          
-          {/* Gruppo 2: Login/Logout (per desktop si allinea al resto) */}
-          <div className="nav-group-auth" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+
+          <div className="nav-group-auth">
             {user ? (
               <>
-                <span style={{ fontSize: '0.9em' }}>Access: {user.toUpperCase()}</span>
-                <button onClick={handleLogoutClick} style={{ padding: '5px 10px', backgroundColor: '#b4945cff', fontWeight: 700, color: 'white', border: 'none', cursor: 'pointer', borderRadius: '3px' }}>
+                <span style={{ fontSize: '0.9em', color: 'white'}}>Access: {user.toUpperCase()}</span>
+                <button
+                  onClick={handleLogoutClick}
+                  style={{
+                    padding: '5px 10px',
+                    backgroundColor: '#B89B6A',
+                    color: 'white',
+                    border: 'none',
+                    cursor: 'pointer',
+                    borderRadius: '3px'
+                  }}
+                >
                   Logout
                 </button>
               </>
             ) : (
-              <li><Link to="/login" className={getLinkClass('/login')} onClick={handleLinkClick}>Login / Register</Link></li>
+              <li>
+                <FlipLink to="/login" className={getLinkClass('/login')} onClick={handleLinkClick}>
+                  Login / Register
+                </FlipLink>
+              </li>
             )}
           </div>
         </div>
